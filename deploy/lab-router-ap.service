@@ -1,0 +1,19 @@
+[Unit]
+Description=LAB Router dedicated hostapd (ap-tr069 only)
+After=network.target
+ConditionPathExists=/var/lib/lab-router-network/hostapd.conf
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/hostapd /var/lib/lab-router-network/hostapd.conf
+Restart=on-failure
+RestartSec=3
+UMask=0077
+NoNewPrivileges=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/run/lab-router-hostapd
+RuntimeDirectory=lab-router-hostapd
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+[Unit]
+Description=LAB Router PPPoE dialer (CPE WANPPPConnection, simulated BRAS only)
+After=lab-router-bras.service
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/pppd file /var/lib/lab-router-network/pppoe.options nodetach
+Restart=always
+RestartSec=5

@@ -1,0 +1,27 @@
+[Unit]
+Description=LAB Router simulated BRAS (PPPoE server in netns lab-bras)
+After=lab-router-helper.service
+
+[Service]
+Type=forking
+RuntimeDirectory=lab-router-bras
+PIDFile=/run/lab-router-bras/pppoe-server.pid
+EnvironmentFile=/var/lib/lab-router-network/bras.env
+# `ip netns exec` bind-mounts /etc/netns/lab-bras/ppp over /etc/ppp for the BRAS only;
+# it points to the accounts/options written by the helper.
+ExecStartPre=/bin/sh -c 'mkdir -p /etc/netns/lab-bras && ln -sfn /var/lib/lab-router-network/bras /etc/netns/lab-bras/ppp'
+# Namespace + veth live with this unit; start from a clean state every time.
+ExecStartPre=-/usr/sbin/ip link del pppoe-wan
+ExecStartPre=-/usr/sbin/ip netns del lab-bras
+ExecStartPre=/usr/sbin/ip netns add lab-bras
+ExecStartPre=/usr/sbin/ip link add pppoe-wan type veth peer name bras0
+ExecStartPre=/usr/sbin/ip link set bras0 netns lab-bras
+ExecStartPre=/usr/sbin/ip link set pppoe-wan up
+ExecStartPre=/usr/sbin/ip -n lab-bras link set bras0 up
+ExecStartPre=/usr/sbin/ip -n lab-bras link set lo up
+ExecStart=/usr/sbin/ip netns exec lab-bras /usr/sbin/pppoe-server $BRAS_ARGS
+ExecStopPost=-/usr/sbin/ip link del pppoe-wan
+ExecStopPost=-/usr/sbin/ip netns del lab-bras
+KillMode=control-group
+Restart=on-failure
+RestartSec=5

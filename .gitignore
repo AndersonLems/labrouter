@@ -1,0 +1,15 @@
+/var/
+/bin/
+/web/node_modules/
+/web/tsconfig.tsbuildinfo
+/artifacts/*.json
+/artifacts/*.png
+/artifacts/*.log
+*.db*
+.env
+
+/artifacts/generated/
+/artifacts/systemd-root/
+
+/artifacts/*.pdf
+/artifacts/*.txt

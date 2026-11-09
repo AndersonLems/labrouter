@@ -1,0 +1,30 @@
+[Unit]
+Description=LAB Router local administration API
+After=network.target
+
+[Service]
+Type=simple
+User=lab-router
+Group=lab-router
+EnvironmentFile=/etc/lab-router/environment
+ExecStart=/usr/local/lib/lab-router/lab-router api
+Restart=on-failure
+RestartSec=3
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/lab-router
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+# Only CAP_NET_RAW, so the Diagnostics page can run ping (ICMP raw socket).
+# Ambient capabilities remain compatible with NoNewPrivileges=true.
+CapabilityBoundingSet=CAP_NET_RAW
+AmbientCapabilities=CAP_NET_RAW
+LockPersonality=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+[Install]
+WantedBy=multi-user.target

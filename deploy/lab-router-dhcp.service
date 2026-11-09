@@ -1,0 +1,18 @@
+[Unit]
+Description=LAB Router dedicated DHCP (ap-tr069 only)
+After=network.target
+ConditionPathExists=/var/lib/lab-router-network/dnsmasq.conf
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/dnsmasq --keep-in-foreground --conf-file=/var/lib/lab-router-network/dnsmasq.conf --user=lab-router --group=lab-router --pid-file=/run/lab-router-dhcp/dnsmasq.pid
+Restart=on-failure
+RestartSec=3
+RuntimeDirectory=lab-router-dhcp
+NoNewPrivileges=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/lab-router-dhcp /run/lab-router-dhcp
+
+[Install]
+WantedBy=multi-user.target
